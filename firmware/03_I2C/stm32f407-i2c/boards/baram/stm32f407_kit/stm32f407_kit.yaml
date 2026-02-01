@@ -1,0 +1,15 @@
+identifier: stm32f407_kit
+name: BARAM STM32F407 KIT
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+ram: 128
+flash: 1024
+supported:
+  - can
+  - pwm
+  - counter
+  - adc
+vendor: baram
