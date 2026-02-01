@@ -1,0 +1,6 @@
+board:
+  name: stm32f407_kit
+  full_name: STM32F407 KIT
+  vendor: baram
+  socs:
+    - name: stm32f407xx
