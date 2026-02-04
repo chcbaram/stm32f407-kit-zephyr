@@ -1,0 +1,9 @@
+# Copyright (c) 2016 Linaro Limited.
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_STM32F407_KIT
+	select SOC_STM32F407XG
+
+  select USE_STM32_HAL_GPIO
+  select USE_STM32_HAL_I2C
+  select USE_STM32_HAL_I2C_EX
