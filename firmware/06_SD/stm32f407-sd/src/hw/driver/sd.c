@@ -61,8 +61,7 @@ bool sdInit(void)
       // STM32F407 SDIO Register base address: 0x40012C00
       volatile uint32_t *SDIO_CLKCR = (uint32_t *)(0x40012C00 + 0x04);
       uint32_t           clkdiv     = (*SDIO_CLKCR) & 0xFF; // CLKDIV 비트 (0-7)
-
-      /* 위 1번에서 구한 48MHz(src_rate)를 대입 */
+      
       uint32_t actual_speed = 48000000 / (clkdiv + 2);
       logPrintf("     max bus freq: %u MHz\n", actual_speed/1000000);
     }
