@@ -26,14 +26,12 @@ bool hwInit(void)
     
   gpioInit();  
   i2cInit();
+  sdInit();
+  fatfsInit();
     
   lcdInit();
   lcdSetFps(20);
     
 
-  if (sdInit() == true)
-  {
-    fatfsInit();
-  }   
   return true;
 }

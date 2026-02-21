@@ -24,19 +24,21 @@ bool fatfsInit(void)
 {
   bool ret = true;
 
-  if (sdIsInit() == false)
+  if (sdIsInit())
   {
-    return false;
-  };
+    if(f_mount(&fat_fs, (TCHAR const*)disk_mount_pt, 1) == FR_OK)
+    {
+      is_init = true;
+    }
 
-
-  if(f_mount(&fat_fs, (TCHAR const*)disk_mount_pt, 1) == FR_OK)
-  {
-    is_init = true;
+    ret = is_init;
+    logPrintf("[%s] fatfsInit()\n", ret ? "OK":"E_");
   }
-
-  ret = is_init;
-  logPrintf("[%s] fatfsInit()\n", ret ? "OK":"NG");
+  else
+  {
+    logPrintf("[  ] fatfsInit()\n");
+    logPrintf("     sdcard not found\n");
+  }
 
 #if CLI_USE(HW_FATFS)
   cliAdd("fatfs", cliFatfs);

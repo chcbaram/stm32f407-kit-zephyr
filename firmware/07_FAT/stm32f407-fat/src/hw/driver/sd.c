@@ -13,12 +13,15 @@
 
 #define DISK_NAME   "SD"
 
+#define SD_EVENT_FUNC_MAX    8
 
 
-static bool is_init = false;
-static bool is_detected = false;
-static uint8_t is_try = 0;
-static sd_state_t sd_state = SDCARD_IDLE;
+static bool       is_init        = false;
+static bool       is_detected    = false;
+static uint8_t    is_try         = 0;
+static sd_state_t sd_state       = SDCARD_IDLE;
+static uint8_t    sd_event_index = 0;
+static void (*sd_event_func[SD_EVENT_FUNC_MAX])(sd_event_t);
 
 const struct device *sdhc_dev = DEVICE_DT_GET(DT_NODELABEL(sdmmc1));
 
@@ -122,6 +125,28 @@ bool sdDeInit(void)
   return ret;
 }
 
+bool sdAddEventFunc(void (*p_func)(sd_event_t))
+{
+  if (sd_event_index >= SD_EVENT_FUNC_MAX) return false;
+
+
+  sd_event_func[sd_event_index] = p_func;
+  sd_event_index++;
+
+  return true;
+}
+
+bool sdSendEvent(sd_event_t *p_sd_event)
+{
+ 
+  for (int i=0; i<sd_event_index; i++)
+  {
+    sd_event_func[i](*p_sd_event);
+  }
+
+  return true;
+}
+
 bool sdIsInit(void)
 {
   return is_init;
@@ -145,8 +170,10 @@ sd_state_t sdUpdate(void)
 {
   sd_state_t ret_state = SDCARD_IDLE;
   static uint32_t pre_time;
+  static sd_state_t pre_state;
 
 
+  pre_state = sd_state;
   switch(sd_state)
   {
     case SDCARD_IDLE:
@@ -208,6 +235,13 @@ sd_state_t sdUpdate(void)
 
     case SDCARD_ERROR:
       break;
+  }
+
+  if (pre_state != sd_state)
+  {
+    sd_event_t sd_event;
+    sd_event.sd_state = sd_state;    
+    sdSendEvent(&sd_event);
   }
 
   return ret_state;
