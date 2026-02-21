@@ -1,0 +1,17 @@
+# Copyright (c) 2025 TOKITA Hiroshi
+# SPDX-License-Identifier: Apache-2.0
+
+if BOARD_STM32F407_KIT
+
+if NETWORKING
+
+config NET_L2_ETHERNET
+	default y
+config MDIO
+	default y
+config TEST_RANDOM_GENERATOR
+	default y
+
+endif # NETWORKING
+
+endif 
