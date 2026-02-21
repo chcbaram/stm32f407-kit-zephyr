@@ -1,0 +1,142 @@
+/*
+ * Copyright (c) 2017 Linaro Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+#include <st/f4/stm32f407Xg.dtsi>
+#include <st/f4/stm32f407z(e-g)tx-pinctrl.dtsi>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+
+/ {
+	model = "BARAM STM32F407-KIT";
+	compatible = "st,stm32f407_kit";
+
+	chosen {
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,ccm = &ccm0;
+		zephyr,console = &usart1;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		led0: led_0 {
+			gpios = <&gpiof 12 GPIO_ACTIVE_HIGH>;
+		};
+
+		led1: led_1 {
+			gpios = <&gpiod 13 GPIO_ACTIVE_HIGH>;
+		};
+    
+		led2: led_2 {
+			gpios = <&gpiod 14 GPIO_ACTIVE_HIGH>;
+		};        
+	};
+
+  gpio_pins {    		
+		compatible = "gpio-leds";
+    sd_cd: sd_cd {			
+      gpios = <&gpioc 13 GPIO_ACTIVE_LOW>;     
+    };
+  };
+
+};
+
+&clk_lsi {
+	status = "okay";
+};
+
+&clk_hse {
+	clock-frequency = <DT_FREQ_M(25)>;
+	status = "okay";
+};
+
+&pll {
+	div-m = <25>;
+	mul-n = <336>;
+	div-p = <2>;
+	div-q = <7>;
+	clocks = <&clk_hse>;
+	status = "okay";
+};
+
+// &plli2s {
+//   div-m = <25>;      /* 25 / 25 = 1MHz */
+//   mul-n = <192>;    /* 1 * 192 = 192MHz (VCO_i2s) */
+//   div-q = <4>;      /* 192 / 4 = 48MHz (최종 출력) */
+//   status = "okay";
+// };
+
+&rcc {
+	clocks = <&pll>;
+	clock-frequency = <DT_FREQ_M(168)>;
+	ahb-prescaler = <1>;
+	apb1-prescaler = <4>;
+	apb2-prescaler = <2>;
+};
+
+&die_temp {
+	status = "okay";
+};
+
+&vref {
+	status = "okay";
+};
+
+&vbat {
+	status = "okay";
+};
+
+&dma1 {
+	status = "okay";
+};
+
+&usart1 {
+	pinctrl-0 = <&usart1_tx_pa9 &usart1_rx_pa10>;
+	pinctrl-names = "default";
+	current-speed = <115200>;
+	status = "okay";
+};
+
+&mac {
+	status = "okay";
+	pinctrl-0 = < &eth_rxd0_pc4
+                &eth_rxd1_pc5
+                &eth_ref_clk_pa1
+                &eth_crs_dv_pa7
+                &eth_tx_en_pb11
+                &eth_txd0_pg13
+                &eth_txd1_pg14>;
+	pinctrl-names = "default";
+	phy-connection-type = "rmii";
+	phy-handle = <&eth_phy>;
+};
+
+&mdio {
+	status = "okay";
+	pinctrl-0 = <&eth_mdio_pa2 &eth_mdc_pc1>;
+	pinctrl-names = "default";
+
+	eth_phy: ethernet-phy@0 {
+		compatible = "ethernet-phy";
+		reg = <0x00>;
+	};
+};
+
+&sdmmc1 {
+	clocks = <&rcc STM32_CLOCK(APB2, 11)>,
+           <&rcc STM32_SRC_PLL_Q I2S_SEL(0)>;
+	status = "okay";
+	pinctrl-0 = <&sdio_d0_pc8
+		     &sdio_d1_pc9
+		     &sdio_d2_pc10
+		     &sdio_d3_pc11
+		     &sdio_ck_pc12
+		     &sdio_cmd_pd2>;  
+	pinctrl-names = "default";
+  bus-width = <4>;
+	disk-name = "SD";
+};
