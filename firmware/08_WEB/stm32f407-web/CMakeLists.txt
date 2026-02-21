@@ -22,7 +22,6 @@ file(GLOB_RECURSE SRC_FILES_RECURSE CONFIGURE_DEPENDS
 target_sources(app PRIVATE 
   ${SRC_FILES}
   ${SRC_FILES_RECURSE}
-  ${mongoose_files}
 )
 
 target_include_directories(app PRIVATE 
